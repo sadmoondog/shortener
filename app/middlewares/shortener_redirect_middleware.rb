@@ -9,8 +9,10 @@ class ShortenerRedirectMiddleware
       shortener.track env if ::Shortener.tracking
 
       uid = ''
-      uid ='u'+env['rack.session']['warden.user.user.key'][1][0].to_s  unless env['rack.session']['warden.user.user.key'][1][0].blank?
-
+      begin
+        uid ='u'+env['rack.session']['warden.user.user.key'][1][0].to_s
+      rescue
+      end
       [301, {'Location' => shortener.url.gsub('sofitsmeuserid', uid)}, []]
     else
       @app.call(env)
