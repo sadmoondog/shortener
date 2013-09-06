@@ -8,7 +8,7 @@ class Shortener::ShortenedClick < ActiveRecord::Base
 
   def track env
     # logger.info(env)
-
+    self.user_id = env['rack.session']['warden.user.user.key'][1][0] unless env['rack.session']['warden.user.user.key'][1][0].blank?
     self.remote_ip = (env["HTTP_X_FORWARDED_FOR"] || env["REMOTE_ADDR"]).to_s
     self.referer = env["HTTP_REFERER"].to_s
     self.agent = env["HTTP_USER_AGENT"].to_s
