@@ -1,4 +1,7 @@
 class ShortenerRedirectMiddleware
+
+  require 'split'
+
   def initialize(app)
     @app = app
   end
