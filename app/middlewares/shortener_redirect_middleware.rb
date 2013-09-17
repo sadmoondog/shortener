@@ -1,6 +1,6 @@
 class ShortenerRedirectMiddleware
 
-  require 'split'
+
 
   def initialize(app)
     @app = app
@@ -16,7 +16,6 @@ class ShortenerRedirectMiddleware
         uid ='u'+env['rack.session']['warden.user.user.key'][1][0].to_s
       rescue
       end
-      finished ("buy_view_button")
       [301, {'Location' => shortener.url.gsub('sofitsmeuserid', uid)}, []]
     else
       @app.call(env)
