@@ -23,6 +23,7 @@ gem "jbuilder"
 # gem 'debugger'
 
 gem "thin"
+gem 'split'
 
 group :development do
   gem 'meta_request'
