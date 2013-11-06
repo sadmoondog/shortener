@@ -11,7 +11,7 @@ class ShortenerRedirectMiddleware
     if (env["PATH_INFO"] =~ ::Shortener.match_url) && (shortener = ::Shortener::ShortenedUrl.find_by_unique_key($1))
       shortener.track env if ::Shortener.tracking
 
-      uid = ''
+      uid = 'u0'
       begin
         uid ='u'+env['rack.session']['warden.user.user.key'][1][0].to_s
       rescue
