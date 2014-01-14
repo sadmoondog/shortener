@@ -8,7 +8,7 @@ module Shortener::ShortenerHelper
 
   def short_url_param(url, param)
     shortener = Shortener::ShortenedUrl.generate!(url)
-    shortener ? URI.join(root_url, Shortener.clean_url_prefix,  "/#{shortener.unique_key}", "?"+param.map{|key, val| "#{key}=#{val}"}.join("&")) : url
+    shortener ? URI.join(root_url, Shortener.clean_url_prefix,  "/#{shortener.unique_key}", "?"+param.map{|key, val| "#{key}=#{val}"}.join("")) : url
   end
 
 end

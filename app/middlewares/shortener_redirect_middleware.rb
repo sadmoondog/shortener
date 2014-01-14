@@ -19,7 +19,7 @@ class ShortenerRedirectMiddleware
       end
 
       begin
-        uid += CGI.escape("|"+env['QUERY_STRING'])
+        uid += CGI.escape(env['QUERY_STRING'])
       rescue
       end
 
