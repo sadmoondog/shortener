@@ -12,9 +12,8 @@ class ShortenerRedirectMiddleware
 
       shortener.track env if ::Shortener.tracking
 
-      uid = 'u0'
-      uid ='u'+env['rack.session']['warden.user.user.key'][1][0].to_s rescue nil
-      uid += CGI.escape(env['QUERY_STRING']) rescue nil
+      uid ='u'+env['rack.session']['warden.user.user.key'][1][0].to_s rescue 'u0'
+      uid += CGI.escape(env['QUERY_STRING']) rescue 'u0'
       track! :click, {:identity=>UserIdentity.new(env['rack.session'][Evercookie.hash_name_for_saved][:uid]), :values=>[1]} rescue nil
 
       [301, {'Location' => shortener.url.gsub('sofitsmeuserid', uid)}, []]
