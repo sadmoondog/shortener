@@ -14,6 +14,20 @@ class ShortenerRedirectMiddleware
 
       uid ='u'+env['rack.session']['warden.user.user.key'][1][0].to_s rescue 'u0'
       uid += CGI.escape(env['QUERY_STRING']) rescue 'u0'
+
+      begin
+        prices = /(p\d{1})/.match(env['QUERY_STRING']).captures
+        prices.each do |price|
+          case price
+            when 'p0'
+              track! :p0click
+            when 'p1'
+              track! :p1click
+          end
+        end
+      rescue
+      end
+
       track! :click, {:identity=>UserIdentity.new(env['rack.session'][Evercookie.hash_name_for_saved][:uid]), :values=>[1]} rescue nil
 
       [301, {'Location' => shortener.url.gsub('sofitsmeuserid', uid)}, []]
