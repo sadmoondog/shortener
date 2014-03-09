@@ -9,12 +9,12 @@ class Shortener::ShortenedClick < ActiveRecord::Base
 
   def track (env, data={})
 
-    cookies = env['HTTP_COOKIE'].split("\;").map{|str| str.split("=")}.map{|arr| {arr[0]=>arr[1]}}.reduce Hash.new, :merge
+    cookies_data = env['HTTP_COOKIE'].split("\;").map{|str| str.split("=")}.map{|arr| {arr[0]=>arr[1]}}.reduce Hash.new, :merge
     path = Addressable::URI.parse(env['REQUEST_URI']).path.split('/').reject!{|val| val.blank?}
     # logger.info(env)
     self.user_id = env['rack.session']['warden.user.user.key'][1][0] rescue nil
-    self.session_id = cookies['_session_id'] rescue nil
-    self.uuid = cookies[:uuid] rescue nil
+    self.session_id = cookies_data['_session_id'] rescue nil
+    self.uuid = cookies_data['uuid'] rescue nil
     self.custom_data = data unless data.blank?
     self.remote_ip = (env["HTTP_X_FORWARDED_FOR"] || env["REMOTE_ADDR"]).to_s
     self.referer = env["HTTP_REFERER"].to_s
