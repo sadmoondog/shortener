@@ -10,10 +10,11 @@ class ShortenerRedirectMiddleware
 
     if (env["PATH_INFO"] =~ ::Shortener.match_url) && (shortener = ::Shortener::ShortenedUrl.find_by_unique_key($1))
       data = {}
+      subid = new_unique_code
       begin
         thing_id = /t(\d+)sofitsmeuserid/.match(shortener.url)[1].to_i
         t = Thing.find(thing_id)
-        data =  {:item_id=>t.item.id, :thing_id=>t.id} if t
+        data =  {:item_id=>t.item.id, :thing_id=>t.id, :subid=>subid} if t
       rescue
       end
 
@@ -45,4 +46,18 @@ class ShortenerRedirectMiddleware
     end
 
   end
+
+
+  private
+
+  def new_unique_code
+    new_code = Digest::SHA1.hexdigest(srand.to_s)[0,10]
+
+    while Shortener::ShortenedClick.find_by_subid(new_code)
+      new_code = Digest::SHA1.hexdigest(srand.to_s)[0,10]
+    end
+
+    new_code
+  end
+
 end

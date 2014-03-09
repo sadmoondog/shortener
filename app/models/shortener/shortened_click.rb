@@ -22,7 +22,7 @@ class Shortener::ShortenedClick < ActiveRecord::Base
     self.country = geo_ip.country(self.remote_ip).country_name.to_s
     self.browser = user_agent.browser.to_s
     self.platform = user_agent.platform.to_s
-    self.subid = new_unique_code
+    self.subid = data[:subid] unless data.blank?
 
     return self.subid
 
@@ -41,15 +41,5 @@ class Shortener::ShortenedClick < ActiveRecord::Base
   end
 
 
-  private
 
-    def new_unique_code
-      new_code = Digest::SHA1.hexdigest(srand.to_s)[0,10]
-
-      while Shortener::ShortenedClick.find_by_subid(new_code)
-        new_code = Digest::SHA1.hexdigest(srand.to_s)[0,10]
-      end
-
-      new_code
-    end
 end
