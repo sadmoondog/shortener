@@ -13,8 +13,8 @@ class Shortener::ShortenedClick < ActiveRecord::Base
     path = Addressable::URI.parse(env['REQUEST_URI']).path.split('/').reject!{|val| val.blank?}
     # logger.info(env)
     self.user_id = env['rack.session']['warden.user.user.key'][1][0] rescue nil
-    self.session_id = cookies_data['_session_id'] rescue nil
-    self.uuid = cookies_data['uuid'] rescue nil
+    self.session_id = cookies_data[' _session_id'] rescue nil
+    self.uuid = cookies_data[' uuid'] rescue nil
     self.custom_data = data unless data.blank?
     self.remote_ip = (env["HTTP_X_FORWARDED_FOR"] || env["REMOTE_ADDR"]).to_s
     self.referer = env["HTTP_REFERER"].to_s
