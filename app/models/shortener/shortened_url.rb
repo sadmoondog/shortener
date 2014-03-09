@@ -62,7 +62,7 @@ class Shortener::ShortenedUrl < ActiveRecord::Base
   end
 
   # track how many times the link has been clicked, etc
-  def track env
+  def track (env, data={})
     # don't want to wait for the increment to happen, make it snappy!
     # this is the place to enhance the metrics captured
     # for the system. You could log the request origin
@@ -70,7 +70,7 @@ class Shortener::ShortenedUrl < ActiveRecord::Base
     tracking = Proc.new do
       increment!(:use_count)
       click = shortened_clicks.new
-      click.track env
+      click.track (env, data)
       click.save
 
       # if Shortener.tracking_with_new_thread
