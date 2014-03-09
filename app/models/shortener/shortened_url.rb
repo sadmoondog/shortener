@@ -70,7 +70,7 @@ class Shortener::ShortenedUrl < ActiveRecord::Base
     tracking = Proc.new do
       increment!(:use_count)
       click = shortened_clicks.new
-      click.track (env, data)
+      click.track env, data
       click.save
 
       # if Shortener.tracking_with_new_thread

@@ -10,18 +10,18 @@ class ShortenerRedirectMiddleware
 
     if (env["PATH_INFO"] =~ ::Shortener.match_url) && (shortener = ::Shortener::ShortenedUrl.find_by_unique_key($1))
       data = {}
-      subid = new_unique_code
+      uid = new_unique_code
       begin
         thing_id = /t(\d+)sofitsmeuserid/.match(shortener.url)[1].to_i
         t = Thing.find(thing_id)
-        data =  {:item_id=>t.item.id, :thing_id=>t.id, :subid=>subid} if t
+        data =  {:item_id=>t.item.id, :thing_id=>t.id, :subid=>uid} if t
       rescue
       end
 
-      uid = ''
-      if ::Shortener.tracking
-        uid+='c'+shortener.track(env, data)
-      end
+
+
+      shortener.track(env, data) if ::Shortener.tracking
+
       uid +='u'+env['rack.session']['warden.user.user.key'][1][0].to_s rescue 'u0'
       uid += CGI.escape(env['QUERY_STRING']) rescue 'u0'
 
