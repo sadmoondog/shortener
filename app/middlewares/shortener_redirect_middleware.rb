@@ -40,7 +40,7 @@ class ShortenerRedirectMiddleware
 
       track! :click, {:identity=>UserIdentity.new(env['rack.session'][Evercookie.hash_name_for_saved][:uid]), :values=>[1]} rescue nil
 
-      [301, {'Location' => shortener.url.gsub('sofitsmeuserid', uid)}, []]
+      [301, {'Location' => shortener.url.gsub('sofitsmeuserid', 'c'+uid)}, []]
     else
       @app.call(env)
     end
