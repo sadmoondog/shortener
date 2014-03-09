@@ -3,21 +3,29 @@ require 'useragent'
 
 class Shortener::ShortenedClick < ActiveRecord::Base
   belongs_to :shortened_url
+  serialize :custom_data
 
   GeoIPDataPath = File.absolute_path File.join(__FILE__, "../../../../config")
 
-  def track env
+  def track (env, data={})
+
+    cookies = env['HTTP_COOKIE'].split("\;").map{|str| str.split("=")}.map{|arr| {arr[0]=>arr[1]}}.reduce Hash.new, :merge
+    path = Addressable::URI.parse(env['REQUEST_URI']).path.split('/').reject!{|val| val.blank?}
     # logger.info(env)
-    begin
-      self.user_id = env['rack.session']['warden.user.user.key'][1][0]
-    rescue
-    end
+    self.user_id = env['rack.session']['warden.user.user.key'][1][0] rescue nil
+    self.session_id = cookies['_session_id'] rescue nil
+    self.uuid = cookies[:uuid] rescue nil
+    self.custom_data = data unless data.blank?
     self.remote_ip = (env["HTTP_X_FORWARDED_FOR"] || env["REMOTE_ADDR"]).to_s
     self.referer = env["HTTP_REFERER"].to_s
     self.agent = env["HTTP_USER_AGENT"].to_s
     self.country = geo_ip.country(self.remote_ip).country_name.to_s
     self.browser = user_agent.browser.to_s
     self.platform = user_agent.platform.to_s
+    self.subid = new_unique_code
+
+    return self.subid
+
   end
 
   def user_agent
@@ -31,4 +39,17 @@ class Shortener::ShortenedClick < ActiveRecord::Base
   def geo_lite_city
     @geo_ip ||= GeoIP.new(File.join(GeoIPDataPath, 'GeoLiteCity.dat'))
   end
+
+
+  private
+
+    def new_unique_code
+      new_code = Digest::SHA1.hexdigest(srand.to_s)[0,10]
+
+      while Shortener::ShortenedClick.find_by_subid(new_code)
+        new_code = Digest::SHA1.hexdigest(srand.to_s)[0,10]
+      end
+
+      new_code
+    end
 end
