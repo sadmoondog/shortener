@@ -26,7 +26,7 @@ module Shortener
   self.charset = :alphanum
 
   # default matching url regex: /^\/([\w\d]+)$/
-  self.url_prefix = "/"
+  self.url_prefix = "/go/"
 
   def self.clean_url_prefix
     @clean_url ||= "#{url_prefix}#{"/" unless url_prefix.end_with? "/"}"
